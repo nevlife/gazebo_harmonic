@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ros2_control configuration for Ackermann steering -->
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+
+    <!-- Left front steering joint -->
+    <joint name="front_steer_left_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <!-- Right front steering joint (independent control, no mimic) -->
+    <joint name="front_steer_right_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <!-- Left rear drive wheel -->
+    <joint name="rear_left_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+    <!-- Right rear drive wheel (independent control, no mimic) -->
+    <joint name="rear_right_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+    <!-- Front wheels (passive, state only) -->
+    <joint name="front_left_wheel_joint">
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+    <joint name="front_right_wheel_joint">
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+  </ros2_control>
+
+  <!-- Gazebo ros2_control plugin -->
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find hunter2_base)/config/ackermann_like_controller_adapted.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>

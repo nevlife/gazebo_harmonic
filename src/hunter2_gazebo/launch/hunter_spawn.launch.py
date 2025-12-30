@@ -1,7 +1,7 @@
 import os
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch.actions import SetEnvironmentVariable
 from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
@@ -14,9 +14,36 @@ import launch
 def generate_launch_description():
     urdf_pkg_share = FindPackageShare(package='hunter2_base').find('hunter2_base')
     pkg_share = FindPackageShare(package='hunter2_gazebo').find('hunter2_gazebo')
-    urdf_file = os.path.join(urdf_pkg_share, 'urdf/hunter2_base_gazebo.xacro')
+    urdf_file = os.path.join(urdf_pkg_share, 'description/robot.urdf.xacro')
+    #urdf_file = os.path.join(urdf_pkg_share, 'urdf/hunter2_base_gazebo.xacro')
 
     SetEnvironmentVariable('GAZEBO_MODEL_PATH', pkg_share)
+
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'use_sim_time': True,
+            'robot_description': launch_ros.descriptions.ParameterValue( launch.substitutions.Command([
+                    'xacro ',os.path.join(pkg_share,urdf_file)]), value_type=str)
+        }]
+    )
+
+    spawn_entity = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=[
+            '-name', LaunchConfiguration('robot_name'),
+            '-topic', 'robot_description',
+            '-x', LaunchConfiguration('start_x'),
+            '-y', LaunchConfiguration('start_y'),
+            '-z', LaunchConfiguration('start_z'),
+            '-Y', LaunchConfiguration('start_yaw')
+        ],
+        output='screen'
+    )
 
     return LaunchDescription([
         DeclareLaunchArgument('start_x', default_value='0.0',
@@ -29,27 +56,6 @@ def generate_launch_description():
                               description='Yaw angle of starting orientation'),
         DeclareLaunchArgument('robot_name', default_value='',
                               description='Name and prefix for this robot'),
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=[{
-                'use_sim_time': True,
-                'robot_description': launch_ros.descriptions.ParameterValue( launch.substitutions.Command([
-                        'xacro ',os.path.join(pkg_share,urdf_file)]), value_type=str)
-            }]
-        ),
-        Node(
-            package='ros_gz_sim',
-            executable='create',
-            arguments=[
-                '-name', LaunchConfiguration('robot_name'),
-                '-topic', 'robot_description',
-                '-x', LaunchConfiguration('start_x'),
-                '-y', LaunchConfiguration('start_y'),
-                '-z', LaunchConfiguration('start_z'),
-                '-Y', LaunchConfiguration('start_yaw')
-            ],
-            output='screen')
+        robot_state_publisher,
+        spawn_entity,
     ])
