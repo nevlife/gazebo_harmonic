@@ -14,7 +14,7 @@ import launch
 def generate_launch_description():
     urdf_pkg_share = FindPackageShare(package='hunter2_base').find('hunter2_base')
     pkg_share = FindPackageShare(package='hunter2_gazebo').find('hunter2_gazebo')
-    urdf_file = os.path.join(urdf_pkg_share, 'description/robot.urdf.xacro')
+    urdf_file = os.path.join(urdf_pkg_share, 'urdf/robot.xacro')
     #urdf_file = os.path.join(urdf_pkg_share, 'urdf/hunter2_base_gazebo.xacro')
 
     SetEnvironmentVariable('GAZEBO_MODEL_PATH', pkg_share)

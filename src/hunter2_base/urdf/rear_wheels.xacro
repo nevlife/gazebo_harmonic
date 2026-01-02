@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ========== Rear Left Wheel ========== -->
+
+  <link name="rear_left_link">
+    <inertial>
+      <origin xyz="-8.826E-05 6.4342E-05 -0.0096491" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="0.063699" ixy="0" ixz="0"
+               iyy="0.063699" iyz="0" izz="0.11067"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find hunter2_base)/meshes/left_rear_link.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.165" length="0.14"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="rear_left_joint" type="continuous">
+    <origin xyz="-0.28 0.29249 -0.19558" rpy="1.5708 0 0"/>
+    <parent link="base_link"/>
+    <child link="rear_left_link"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="10" velocity="100"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+  <!-- ========== Rear Right Wheel ========== -->
+
+  <link name="rear_right_link">
+    <inertial>
+      <origin xyz="8.6344E-05 7.4488E-05 0.0097824" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="0.06373" ixy="0" ixz="0"
+               iyy="0.06373" iyz="0" izz="0.11073"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find hunter2_base)/meshes/right_rear_link.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.165" length="0.14"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="rear_right_joint" type="continuous">
+    <origin xyz="-0.28018 -0.29251 -0.19558" rpy="1.5708 0.0026575 0"/>
+    <parent link="base_link"/>
+    <child link="rear_right_link"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="10" velocity="100"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+</robot>

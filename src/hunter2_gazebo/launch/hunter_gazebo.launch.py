@@ -2,15 +2,22 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, ExecuteProcess
+from launch.actions import IncludeLaunchDescription, ExecuteProcess, SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
 
 def generate_launch_description():
 
-    gazebo_world_path = os.path.join(
-        get_package_share_directory('hunter2_gazebo'), 'world', 'empty.sdf')
+    # Set Gazebo model path
+    gazebo_model_path = '/home/pgw/dev/gazebo_models_worlds_collection'
+    set_gz_resource_path = SetEnvironmentVariable(
+        name='GZ_SIM_RESOURCE_PATH',
+        value=gazebo_model_path
+    )
+
+    # Use empty world
+    gazebo_world_path = 'empty.sdf'
 
     gazebo_simulator = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -54,6 +61,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        set_gz_resource_path,
         gazebo_simulator,
         spawn_car,
         bridge,

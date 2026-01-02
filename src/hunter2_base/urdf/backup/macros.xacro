@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Wheel Link Macro -->
+  <xacro:macro name="wheel_link" params="name mesh_file mass ixx iyy izz">
+    <link name="${name}">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+        <inertia ixx="${ixx}" ixy="0.0" ixz="0.0"
+                 iyy="${iyy}" iyz="0.0" izz="${izz}"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find hunter2_base)/meshes/${mesh_file}.STL"/>
+        </geometry>
+        <material name="">
+          <color rgba="0.1 0.1 0.1 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find hunter2_base)/meshes/${mesh_file}.STL"/>
+        </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <!-- Steering Link Macro (virtual, very small) -->
+  <xacro:macro name="steering_link" params="name mass ixx iyy izz">
+    <link name="${name}">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+        <inertia ixx="${ixx}" ixy="0.0" ixz="0.0"
+                 iyy="${iyy}" iyz="0.0" izz="${izz}"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="">
+          <color rgba="0.79216 0.81961 0.93333 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <!-- Wheel Joint Macro -->
+  <xacro:macro name="wheel_joint" params="name parent child xyz rpy">
+    <joint name="${name}" type="continuous">
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+      <parent link="${parent}"/>
+      <child link="${child}"/>
+      <axis xyz="0 0 -1"/>
+      <dynamics damping="0.7"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- Steering Joint Macro -->
+  <xacro:macro name="steering_joint" params="name parent child xyz rpy lower upper">
+    <joint name="${name}" type="continuous">
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+      <parent link="${parent}"/>
+      <child link="${child}"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="${lower}" upper="${upper}" effort="1000" velocity="1000"/>
+      <dynamics damping="0.7"/>
+    </joint>
+  </xacro:macro>
+
+</robot>
