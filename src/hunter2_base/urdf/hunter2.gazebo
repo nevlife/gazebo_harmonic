@@ -231,11 +231,41 @@
 
 <!-- GPS/NavSat Sensor -->
 <gazebo reference="base_link">
+<gazebo reference="base_link">
   <sensor name="navsat_sensor" type="navsat">
     <always_on>1</always_on>
     <update_rate>10</update_rate>
     <topic>gps</topic>
+    
+    <navsat>
+      <position_sensing>
+        <horizontal>
+          <noise type="gaussian">
+            <mean>0.0</mean>
+            <stddev>0.01</stddev> </noise>
+        </horizontal>
+        <vertical>
+          <noise type="gaussian">
+            <mean>0.0</mean>
+            <stddev>0.01</stddev> </noise>
+        </vertical>
+      </position_sensing>
+
+      <velocity_sensing>
+        <horizontal>
+          <noise type="gaussian">
+            <mean>0.0</mean>
+            <stddev>0.01</stddev> </noise>
+        </horizontal>
+        <vertical>
+          <noise type="gaussian">
+            <mean>0.0</mean>
+            <stddev>0.01</stddev> </noise>
+        </vertical>
+      </velocity_sensing>
+    </navsat>
   </sensor>
+</gazebo>
 </gazebo>
 
 
