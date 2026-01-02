@@ -231,7 +231,6 @@
 
 <!-- GPS/NavSat Sensor -->
 <gazebo reference="base_link">
-<gazebo reference="base_link">
   <sensor name="navsat_sensor" type="navsat">
     <always_on>1</always_on>
     <update_rate>10</update_rate>
@@ -266,8 +265,6 @@
     </navsat>
   </sensor>
 </gazebo>
-</gazebo>
-
 
 
 
