@@ -16,8 +16,9 @@ def generate_launch_description():
         value=gazebo_model_path
     )
 
-    # Use empty world
-    gazebo_world_path = 'empty.sdf'
+    # Use empty world with GPS support
+    pkg_share = get_package_share_directory('hunter2_gazebo')
+    gazebo_world_path = os.path.join(pkg_share, 'world', 'empty_with_gps.sdf')
 
     gazebo_simulator = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
