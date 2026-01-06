@@ -11,9 +11,11 @@ def generate_launch_description():
 
     # Set Gazebo model path
     gazebo_model_path = '/home/pgw/dev/gazebo_models_worlds_collection'
+    lidar_model_path = os.path.join(get_package_share_directory('hunter2_base'), 'urdf')
+    combined_path = f'{gazebo_model_path}:{lidar_model_path}'
     set_gz_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
-        value=gazebo_model_path
+        value=combined_path
     )
 
     # Use empty world with GPS support
@@ -56,6 +58,8 @@ def generate_launch_description():
             '/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry',
             '/imu@sensor_msgs/msg/Imu@gz.msgs.IMU',
             '/gps@sensor_msgs/msg/NavSatFix@gz.msgs.NavSat',
+            '/lidar@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+            '/lidar/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'
         ],
         output='screen'
