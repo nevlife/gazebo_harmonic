@@ -4,8 +4,8 @@
   <!-- Front box with logo link -->
   <link name="front_box">
     <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.5"/>
+      <origin xyz="0.23 0.18 0" rpy="0 0 0"/>
+      <mass value="10"/>
       <inertia ixx="0.01" ixy="0.0" ixz="0.0"
                iyy="0.01" iyz="0.0" izz="0.01"/>
     </inertial>
@@ -13,7 +13,7 @@
     <visual name="box_visual_body">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="file://$(find hunter2_base)/meshes/front_box_with_logo_only_body.STL" scale="0.01 0.01 0.01"/>
+        <mesh filename="file://$(find hunter2_base)/meshes/front_box_with_logo_only_body.stl" scale="0.01 0.01 0.01"/>
       </geometry>
       <material name="white">
         <color rgba="1.0 1.0 1.0 1.0"/>
@@ -23,7 +23,7 @@
     <visual name="box_visual_logo">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="file://$(find hunter2_base)/meshes/front_box_with_logo_only_logo.STL" scale="0.01 0.01 0.01"/>
+        <mesh filename="file://$(find hunter2_base)/meshes/front_box_with_logo_only_logo.stl" scale="0.01 0.01 0.01"/>
       </geometry>
       <material name="navy">
         <color rgba="0.0 0.0 0.5 1.0"/>
@@ -33,7 +33,7 @@
     <visual name="box_visual_shadow">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="file://$(find hunter2_base)/meshes/front_box_with_logo_only_shadow.STL" scale="0.01 0.01 0.01"/>
+        <mesh filename="file://$(find hunter2_base)/meshes/front_box_with_logo_only_shadow.stl" scale="0.01 0.01 0.01"/>
       </geometry>
       <material name="black">
         <color rgba="0.1 0.1 0.1 1.0"/>
@@ -48,9 +48,9 @@
     </collision>
   </link>
 
-  <!-- Joint connecting box to base_link -->
+  <!-- Joint connecting box to chassis -->
   <joint name="front_box_joint" type="fixed">
-    <parent link="base_link"/>
+    <parent link="chassis"/>
     <child link="front_box"/>
     <!-- z축 기준 오른쪽으로 90도 회전 (yaw = -90도 = -π/2) -->
     <origin xyz="0.155 0.23 0.015" rpy="0 0 -1.5708"/>

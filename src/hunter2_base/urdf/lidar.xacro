@@ -39,7 +39,7 @@
   <joint name="lidar_visual_joint" type="fixed">
     <parent link="front_box"/>
     <child link="lidar_visual_link"/>
-    <origin xyz="0.0 0.0 0.16" rpy="0 0 0"/>
+    <origin xyz="0.23 0.14 0.28" rpy="0 0 1.5708"/>
   </joint>
 
   <!-- Joint connecting sensor link to visual link -->

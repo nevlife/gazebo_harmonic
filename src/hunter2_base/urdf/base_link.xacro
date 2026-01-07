@@ -1,10 +1,26 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+  <!-- Base Link - ground level reference -->
   <link name="base_link">
     <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+               iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+
+  <!-- Joint connecting base_link to chassis -->
+  <joint name="base_link_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="chassis"/>
+    <origin xyz="0.0 0.0 0.36" rpy="0 0 0"/>
+  </joint>
+
+  <link name="chassis">
+    <inertial>
       <origin xyz="0.0266989327622036 0.000409203500587652 -0.135901124750884" rpy="0 0 0"/>
-      <mass value="10"/>
+      <mass value="72"/>
       <inertia ixx="0.0332370959804736" ixy="-1.013150489971E-06" ixz="-0.00188859201421112"
                iyy="0.111072002332437" iyz="-5.13308150598312E-07" izz="0.12660862809283"/>
     </inertial>
@@ -12,7 +28,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="file://$(find hunter2_base)/meshes/base_link.STL"/>
+        <mesh filename="file://$(find hunter2_base)/meshes/base_link.stl"/>
       </geometry>
       <material name="black">
         <color rgba="0.1 0.1 0.1 1"/>
@@ -22,7 +38,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="file://$(find hunter2_base)/meshes/base_link.STL"/>
+        <mesh filename="file://$(find hunter2_base)/meshes/base_link.stl"/>
       </geometry>
     </collision>
   </link>
@@ -36,7 +52,7 @@
   </link>
 
   <joint name="imu_joint" type="fixed">
-    <parent link="base_link"/>
+    <parent link="chassis"/>
     <child link="imu_link"/>
     <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
   </joint>
@@ -50,7 +66,7 @@
   </link>
 
   <joint name="gps_joint" type="fixed">
-    <parent link="base_link"/>
+    <parent link="chassis"/>
     <child link="gps_link"/>
     <origin xyz="0.0 0.0 0.1" rpy="0 0 0"/>
   </joint>
