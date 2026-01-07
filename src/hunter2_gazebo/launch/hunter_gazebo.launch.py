@@ -53,13 +53,23 @@ def generate_launch_description():
         package='ros_gz_bridge',
         executable='parameter_bridge',
         parameters=[{'use_sim_time': True}],
+        remappings=[('/velodyne_points/points', '/velodyne_points')],
         arguments=[
             '/imu@sensor_msgs/msg/Imu@gz.msgs.IMU',
             '/gps@sensor_msgs/msg/NavSatFix@gz.msgs.NavSat',
-            '/lidar@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
-            '/lidar/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+            # '/lidar@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+            '/velodyne_points/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'
         ],
+        output='screen'
+    )
+
+    # Static TF to bridge URDF link and Gazebo sensor frame
+    static_tf = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_transform_publisher',
+        arguments=['0', '0', '0', '0', '0', '0', 'velodyne_sensor', 'hunter2/base_link/velodyne_sensor'],
         output='screen'
     )
 
@@ -68,4 +78,5 @@ def generate_launch_description():
         gazebo_simulator,
         spawn_car,
         bridge,
+        static_tf,
     ])
