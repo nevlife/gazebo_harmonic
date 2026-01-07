@@ -1,7 +1,8 @@
 import os
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, RegisterEventHandler
+from launch.event_handlers import OnProcessExit
 from launch.actions import SetEnvironmentVariable
 from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
@@ -27,7 +28,7 @@ def generate_launch_description():
         parameters=[{
             'use_sim_time': True,
             'robot_description': launch_ros.descriptions.ParameterValue( launch.substitutions.Command([
-                    'xacro ',os.path.join(pkg_share,urdf_file)]), value_type=str)
+                    'xacro ', urdf_file]), value_type=str)
         }]
     )
 
@@ -45,6 +46,18 @@ def generate_launch_description():
         output='screen'
     )
 
+    load_joint_state_broadcaster = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
+    )
+
+    load_ackermann_steering_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["ackermann_steering_controller", "--controller-manager", "/controller_manager"],
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument('start_x', default_value='0.0',
                               description='X coordinate of starting position'),
@@ -58,4 +71,11 @@ def generate_launch_description():
                               description='Name and prefix for this robot'),
         robot_state_publisher,
         spawn_entity,
+        load_joint_state_broadcaster,
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_joint_state_broadcaster,
+                on_exit=[load_ackermann_steering_controller],
+            )
+        ),
     ])

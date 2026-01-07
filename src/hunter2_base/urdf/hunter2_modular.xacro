@@ -4,6 +4,7 @@
 
   <!-- Include Gazebo plugins -->
   <xacro:include filename="$(find hunter2_base)/urdf/hunter2.gazebo"/>
+  <xacro:include filename="$(find hunter2_base)/urdf/ros2_control.xacro"/>
 
   <!-- Include modular components -->
   <xacro:include filename="$(find hunter2_base)/urdf/base_link.xacro"/>

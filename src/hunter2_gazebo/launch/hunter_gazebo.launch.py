@@ -54,8 +54,6 @@ def generate_launch_description():
         executable='parameter_bridge',
         parameters=[{'use_sim_time': True}],
         arguments=[
-            '/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
-            '/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry',
             '/imu@sensor_msgs/msg/Imu@gz.msgs.IMU',
             '/gps@sensor_msgs/msg/NavSatFix@gz.msgs.NavSat',
             '/lidar@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
