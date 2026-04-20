@@ -7,7 +7,7 @@
   <maintainer email="mateusz.szczygielski@robotec.ai">Mateusz Szczygielski</maintainer>
   <license>Apache License 2.0</license>
 
-  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>cmake</buildtool_depend>
 
   <depend>ignition-gazebo6</depend>
   <depend>ignition-gui6</depend>
@@ -16,6 +16,6 @@
   <depend>ignition-rendering6</depend>
 
   <export>
-    <build_type>ament_cmake</build_type>
+    <build_type>cmake</build_type>
   </export>
 </package>
