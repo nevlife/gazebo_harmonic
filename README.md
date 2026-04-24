@@ -278,8 +278,3 @@ rviz2
 | `gz-sim-navsat-system` | GPS 센서 처리 |
 | `gz-sim-sensors-system` (camera) | 카메라 센서 처리 |
 
-## 알려진 이슈 / 주의사항
-
-- **하드코딩된 모델 경로**: `src/gazebo_harmonic/launch/*.py`에 `gazebo_model_path = '/home/pgw/dev/gazebo_models_worlds_collection'`가 박혀있습니다. 본인 환경 경로로 수정하거나 환경변수로 분리하세요.
-- **fixed-joint reduction 경고**: `imu_link`, `gps_link`가 fixed joint로 연결되어 SDF 변환 시 `base_link`로 lump됩니다. 그 결과 sensor frame이 `hunter2/base_link/imu_sensor` 등으로 발행되며, launch의 static TF가 이를 URDF 링크로 매핑합니다.
-- **NVIDIA EGL 경고**: 시작 시 `libEGL warning: ... failed to create dri2 screen` 메시지가 보일 수 있습니다. Mesa EGL 시도 → NVIDIA로 fallback 정상 동작이며 무시해도 됩니다.
