@@ -11,7 +11,7 @@ import launch
 
 
 def generate_launch_description():
-    pkg_share = FindPackageShare(package='gazebo_fortress').find('gazebo_fortress')
+    pkg_share = FindPackageShare(package='gazebo_harmonic').find('gazebo_harmonic')
     urdf_file = os.path.join(pkg_share, 'urdf/hunter_gazebo.xacro')
 
     # Lightweight URDF for robot_state_publisher (heavy meshes excluded)

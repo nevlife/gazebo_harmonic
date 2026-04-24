@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <ignition/gazebo/components/SystemPluginInfo.hh>
-#include <ignition/plugin/Register.hh>
+#include <gz/sim/components/SystemPluginInfo.hh>
+#include <gz/plugin/Register.hh>
 
 #include "RGLServerPluginManager.hh"
 
 #define PARAM_DO_IGNORE_ENTITIES_IN_LIDAR_LINK_ID "do_ignore_entities_in_lidar_link"
 
-IGNITION_ADD_PLUGIN(
+GZ_ADD_PLUGIN(
     rgl::RGLServerPluginManager,
-    ignition::gazebo::System,
+    gz::sim::System,
     rgl::RGLServerPluginManager::ISystemConfigure,
     rgl::RGLServerPluginManager::ISystemPostUpdate
 )
@@ -32,14 +32,14 @@ namespace rgl
 {
 
 void RGLServerPluginManager::Configure(
-        const ignition::gazebo::Entity& entity,
+        const gz::sim::Entity& entity,
         const std::shared_ptr<const sdf::Element>& sdf,
-        ignition::gazebo::EntityComponentManager& ecm,
-        ignition::gazebo::EventManager& evm)
+        gz::sim::EntityComponentManager& ecm,
+        gz::sim::EventManager& evm)
 {
     ValidateRGLVersion();
     if (!CheckRGL(rgl_configure_logging(RGL_LOG_LEVEL_ERROR, nullptr, true))) {
-        ignerr << "Failed to configure RGL logging.\n";
+        gzerr << "Failed to configure RGL logging.\n";
     }
 
     if (sdf->HasElement(PARAM_DO_IGNORE_ENTITIES_IN_LIDAR_LINK_ID)) {
@@ -48,20 +48,20 @@ void RGLServerPluginManager::Configure(
 }
 
 void RGLServerPluginManager::PostUpdate(
-        const ignition::gazebo::UpdateInfo& info,
-        const ignition::gazebo::EntityComponentManager& ecm)
+        const gz::sim::UpdateInfo& info,
+        const gz::sim::EntityComponentManager& ecm)
 {
     ecm.EachNew<>
             ([this, &ecm](auto&& entity) {
                 return RegisterNewLidarCb(entity, ecm);
             });
 
-    ecm.EachNew<ignition::gazebo::components::Visual, ignition::gazebo::components::Geometry>
+    ecm.EachNew<gz::sim::components::Visual, gz::sim::components::Geometry>
             ([this](auto&& entity, auto&& visual, auto&& geometry) {
                 return LoadEntityToRGLCb(entity, visual, geometry);
             });
 
-    ecm.EachNew<ignition::gazebo::components::LaserRetro>
+    ecm.EachNew<gz::sim::components::LaserRetro>
             ([this](auto&& entity, auto&& laserRetro) {
                 return SetLaserRetroCb(entity, laserRetro);
             });
@@ -71,7 +71,7 @@ void RGLServerPluginManager::PostUpdate(
                 return UnregisterLidarCb(entity, ecm);
             });
 
-    ecm.EachRemoved<ignition::gazebo::components::Visual, ignition::gazebo::components::Geometry>
+    ecm.EachRemoved<gz::sim::components::Visual, gz::sim::components::Geometry>
             ([this](auto&& entity, auto&& visual, auto&& geometry) {
                 return RemoveEntityFromRGLCb(entity, visual, geometry);
             });

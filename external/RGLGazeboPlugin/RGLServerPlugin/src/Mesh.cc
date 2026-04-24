@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <ignition/common/Mesh.hh>
-#include <ignition/common/SubMesh.hh>
-#include <ignition/gazebo/Util.hh>
+#include <gz/common/Mesh.hh>
+#include <gz/common/SubMesh.hh>
+#include <gz/sim/Util.hh>
 
 #include <sdf/Box.hh>
 #include <sdf/Capsule.hh>
@@ -118,14 +118,14 @@ RGLServerPluginManager::MeshInfo RGLServerPluginManager::LoadMesh(
     scaleY = scale.Y();
     scaleZ = scale.Z();
 
-    std::string meshPath = ignition::gazebo::asFullPath(
+    std::string meshPath = gz::sim::asFullPath(
             data.MeshShape()->Uri(),
             data.MeshShape()->FilePath());
 
-    const ignition::common::Mesh* mesh = meshManager->Load(meshPath);
+    const gz::common::Mesh* mesh = meshManager->Load(meshPath);
 
     if (mesh == nullptr) {
-        ignerr << "Failed to import mesh to RGL: " << meshPath << ".\n";
+        gzerr << "Failed to import mesh to RGL: " << meshPath << ".\n";
         return std::monostate{};
     }
 
@@ -138,14 +138,14 @@ RGLServerPluginManager::MeshInfo RGLServerPluginManager::LoadMesh(
     if (auto subMesh = mesh->SubMeshByName(subMeshName).lock()) {
         // subMesh must not be null
         if (subMesh.get()) {
-            ignition::common::SubMesh subMeshCopy(*subMesh);
+            gz::common::SubMesh subMeshCopy(*subMesh);
             if (data.MeshShape()->CenterSubmesh()) {
                 subMeshCopy.Center();
             }
             return subMeshCopy;
         }
     }
-    ignerr << "Failed to import subMesh to RGL: " << subMeshName << ".\n";
+    gzerr << "Failed to import subMesh to RGL: " << subMeshName << ".\n";
     return std::monostate{};
 }
 
@@ -215,7 +215,7 @@ bool RGLServerPluginManager::LoadMeshToRGL(
 
     auto meshInfo = GetMeshPointer(data, scaleX, scaleY, scaleZ);
     if (std::holds_alternative<std::monostate>(meshInfo)) {
-        ignerr << "Failed to load mesh of geometry type '" << static_cast<int>(data.Type())
+        gzerr << "Failed to load mesh of geometry type '" << static_cast<int>(data.Type())
                << "' to RGL. Skipping...\n";
         return false;
     }
@@ -226,14 +226,14 @@ bool RGLServerPluginManager::LoadMeshToRGL(
     std::vector<rgl_vec3f> rglVertices;  // separated array because ign operates on doubles, and rgl on floats
     rgl_vec3i* triangles = nullptr;
 
-    if (std::holds_alternative<ignition::common::SubMesh>(meshInfo)) {
-        auto ignSubMesh = get<ignition::common::SubMesh>(meshInfo);
+    if (std::holds_alternative<gz::common::SubMesh>(meshInfo)) {
+        auto ignSubMesh = get<gz::common::SubMesh>(meshInfo);
         vertexCount = static_cast<int>(ignSubMesh.VertexCount());
         triangleCount = static_cast<int>(ignSubMesh.IndexCount() / 3);
         rglVertices.reserve(vertexCount);
         ignSubMesh.FillArrays(&ignVertices, reinterpret_cast<int**>(&triangles));
     } else {
-        auto ignMesh = get<const ignition::common::Mesh*>(meshInfo);
+        auto ignMesh = get<const gz::common::Mesh*>(meshInfo);
         vertexCount = static_cast<int>(ignMesh->VertexCount());
         triangleCount = static_cast<int>(ignMesh->IndexCount() / 3);
         rglVertices.reserve(vertexCount);

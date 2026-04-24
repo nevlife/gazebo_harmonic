@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <ignition/gazebo/components/CustomSensor.hh>
-#include <ignition/gazebo/components/Link.hh>
-#include <ignition/gazebo/components/SystemPluginInfo.hh>
+#include <gz/sim/components/CustomSensor.hh>
+#include <gz/sim/components/Link.hh>
+#include <gz/sim/components/SystemPluginInfo.hh>
 
 #include "RGLServerPluginManager.hh"
 
@@ -28,17 +28,17 @@ namespace rgl
 
 // always returns true, because the ecm will stop if it encounters false
 bool RGLServerPluginManager::RegisterNewLidarCb(
-        ignition::gazebo::Entity entity,
-        const ignition::gazebo::EntityComponentManager& ecm)
+        gz::sim::Entity entity,
+        const gz::sim::EntityComponentManager& ecm)
 {
     // Plugin must be inside CustomSensor
-    if (!ecm.EntityHasComponentType(entity, ignition::gazebo::components::CustomSensor::typeId))
+    if (!ecm.EntityHasComponentType(entity, gz::sim::components::CustomSensor::typeId))
     {
         return true;
     }
 
     // Looking for plugin
-    auto pluginData = ecm.ComponentData<ignition::gazebo::components::SystemPluginInfo>(entity);
+    auto pluginData = ecm.ComponentData<gz::sim::components::SystemPluginInfo>(entity);
     if (pluginData == std::nullopt) {
         return true;
     }
@@ -72,8 +72,8 @@ bool RGLServerPluginManager::RegisterNewLidarCb(
 
 // always returns true, because the ecm will stop if it encounters false
 bool RGLServerPluginManager::UnregisterLidarCb(
-        ignition::gazebo::Entity entity,
-        const ignition::gazebo::EntityComponentManager& ecm)
+        gz::sim::Entity entity,
+        const gz::sim::EntityComponentManager& ecm)
 {
     if (!lidarEntities.contains(entity)) {
         return true;
@@ -87,25 +87,25 @@ bool RGLServerPluginManager::UnregisterLidarCb(
 
 // always returns true, because the ecm will stop if it encounters false
 bool RGLServerPluginManager::LoadEntityToRGLCb(
-        const ignition::gazebo::Entity& entity,
-        const ignition::gazebo::components::Visual*,
-        const ignition::gazebo::components::Geometry* geometry)
+        const gz::sim::Entity& entity,
+        const gz::sim::components::Visual*,
+        const gz::sim::components::Geometry* geometry)
 {
     if (entitiesToIgnore.contains(entity)) {
         return true;
     }
     if (entitiesInRgl.contains(entity)) {
-        ignwarn << "Trying to add same entity (" << entity << ") to rgl multiple times!\n";
+        gzwarn << "Trying to add same entity (" << entity << ") to rgl multiple times!\n";
         return true;
     }
     rgl_mesh_t rglMesh;
     if (!LoadMeshToRGL(&rglMesh, geometry->Data())) {
-        ignerr << "Failed to load mesh to RGL from entity (" << entity << "). Skipping...\n";
+        gzerr << "Failed to load mesh to RGL from entity (" << entity << "). Skipping...\n";
         return true;
     }
     rgl_entity_t rglEntity;
     if (!CheckRGL(rgl_entity_create(&rglEntity, nullptr, rglMesh))) {
-        ignerr << "Failed to load entity (" << entity << ") to RGL. Skipping...\n";
+        gzerr << "Failed to load entity (" << entity << ") to RGL. Skipping...\n";
         return true;
     }
     entitiesInRgl.insert({entity, {rglEntity, rglMesh}});
@@ -114,9 +114,9 @@ bool RGLServerPluginManager::LoadEntityToRGLCb(
 
 // always returns true, because the ecm will stop if it encounters false
 bool RGLServerPluginManager::RemoveEntityFromRGLCb(
-        const ignition::gazebo::Entity& entity,
-        const ignition::gazebo::components::Visual*,
-        const ignition::gazebo::components::Geometry*)
+        const gz::sim::Entity& entity,
+        const gz::sim::components::Visual*,
+        const gz::sim::components::Geometry*)
 {
     if (entitiesToIgnore.contains(entity)) {
         entitiesToIgnore.erase(entity);
@@ -126,10 +126,10 @@ bool RGLServerPluginManager::RemoveEntityFromRGLCb(
         return true;
     }
     if (!CheckRGL(rgl_entity_destroy(entitiesInRgl.at(entity).first))) {
-        ignerr << "Failed to remove entity (" << entity << ") from RGL.\n";
+        gzerr << "Failed to remove entity (" << entity << ") from RGL.\n";
     }
     if (!CheckRGL(rgl_mesh_destroy(entitiesInRgl.at(entity).second))) {
-        ignerr << "Failed to remove mesh from entity (" << entity << ") in RGL.\n";
+        gzerr << "Failed to remove mesh from entity (" << entity << ") in RGL.\n";
     }
     entitiesInRgl.erase(entity);
     return true;
@@ -137,42 +137,42 @@ bool RGLServerPluginManager::RemoveEntityFromRGLCb(
 
 // always returns true, because the ecm will stop if it encounters false
 bool RGLServerPluginManager::SetLaserRetroCb(
-        const ignition::gazebo::Entity& entity,
-        const ignition::gazebo::components::LaserRetro* laser_retro)
+        const gz::sim::Entity& entity,
+        const gz::sim::components::LaserRetro* laser_retro)
 {
     if (entitiesToIgnore.contains(entity)) {
         return true;
     }
 
     if (!entitiesInRgl.contains(entity)) {
-        ignerr << "Trying to set Laser Retro for entity (" << entity << ") not loaded to RGL!\n";
+        gzerr << "Trying to set Laser Retro for entity (" << entity << ") not loaded to RGL!\n";
         return true;
     }
 
     if (!CheckRGL(rgl_entity_set_laser_retro(entitiesInRgl.at(entity).first, laser_retro->Data()))) {
-        ignerr << "Failed to set Laser Retro for entity (" << entity << ").\n";
+        gzerr << "Failed to set Laser Retro for entity (" << entity << ").\n";
     }
     return true;
 }
 #pragma clang diagnostic pop
 
-void RGLServerPluginManager::UpdateRGLEntityTransforms(const ignition::gazebo::EntityComponentManager& ecm)
+void RGLServerPluginManager::UpdateRGLEntityTransforms(const gz::sim::EntityComponentManager& ecm)
 {
     for (auto entity: entitiesInRgl) {
         rgl_mat3x4f rglMatrix = FindWorldPoseInRglMatrix(entity.first, ecm);
         if (!CheckRGL(rgl_entity_set_transform(entity.second.first, &rglMatrix))) {
-            ignerr << "Failed to update transform for entity (" << entity.first << ").\n";
+            gzerr << "Failed to update transform for entity (" << entity.first << ").\n";
         }
     }
 }
 
-std::unordered_set<ignition::gazebo::Entity> RGLServerPluginManager::GetEntitiesInParentLink(
-        ignition::gazebo::Entity entity,
-        const ignition::gazebo::EntityComponentManager& ecm)
+std::unordered_set<gz::sim::Entity> RGLServerPluginManager::GetEntitiesInParentLink(
+        gz::sim::Entity entity,
+        const gz::sim::EntityComponentManager& ecm)
 {
     auto parentEntity = ecm.ParentEntity(entity);
-    if (parentEntity == ignition::gazebo::kNullEntity ||
-        !ecm.EntityHasComponentType(parentEntity, ignition::gazebo::components::Link::typeId)) {
+    if (parentEntity == gz::sim::kNullEntity ||
+        !ecm.EntityHasComponentType(parentEntity, gz::sim::components::Link::typeId)) {
         return {};
     }
     return ecm.Descendants(parentEntity);

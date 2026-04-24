@@ -5,10 +5,10 @@
     <xacro:property name="for_rviz" value="$(arg for_rviz)"/>
 
     <!-- Include Gazebo plugins -->
-    <xacro:include filename="$(find gazebo_fortress)/urdf/hunter_base.xacro"/>
-    <xacro:include filename="$(find gazebo_fortress)/urdf/gazebo_control.xacro"/>
-    <xacro:include filename="$(find gazebo_fortress)/urdf/velodyne_VLP32C_gazebo.xacro"/>
-    <xacro:include filename="$(find gazebo_fortress)/urdf/camera_gazebo.xacro"/>
+    <xacro:include filename="$(find gazebo_harmonic)/urdf/hunter_base.xacro"/>
+    <xacro:include filename="$(find gazebo_harmonic)/urdf/gazebo_control.xacro"/>
+    <xacro:include filename="$(find gazebo_harmonic)/urdf/velodyne_VLP32C_gazebo.xacro"/>
+    <xacro:include filename="$(find gazebo_harmonic)/urdf/camera_gazebo.xacro"/>
 
     <!-- Include modular components -->
     <xacro:include filename="$(find hunter_base)/urdf/base_link.xacro"/>

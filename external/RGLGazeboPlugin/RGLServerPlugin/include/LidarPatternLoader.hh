@@ -23,8 +23,7 @@
 
 #include <rgl/api/core.h>
 
-#include <ignition/gazebo/System.hh>
-
+#include <gz/sim/System.hh>
 namespace rgl
 {
 
@@ -40,7 +39,7 @@ private:
     LidarPatternLoader() {};
 
     static bool LoadAnglesAndSamplesElement(const sdf::ElementConstPtr& sdf,
-                                            ignition::math::Angle& angleMin, ignition::math::Angle& angleMax,
+                                            gz::math::Angle& angleMin, gz::math::Angle& angleMax,
                                             int& samples);
 
     static bool LoadPatternFromUniform(const sdf::ElementConstPtr& sdf, std::vector<rgl_mat3x4f>& outPattern, std::size_t& outPatternScanSize);
@@ -49,9 +48,9 @@ private:
     static bool LoadPatternFromPresetPath(const sdf::ElementConstPtr& sdf, std::vector<rgl_mat3x4f>& outPattern, std::size_t& outPatternScanSize);
     static bool LoadPatternFromLidar2d(const sdf::ElementConstPtr& sdf, std::vector<rgl_mat3x4f>& outPattern, std::size_t& outPatternScanSize);
 
-    static rgl_mat3x4f AnglesToRglMat3x4f(const ignition::math::Angle& roll,
-                                          const ignition::math::Angle& pitch,
-                                          const ignition::math::Angle& yaw);
+    static rgl_mat3x4f AnglesToRglMat3x4f(const gz::math::Angle& roll,
+                                          const gz::math::Angle& pitch,
+                                          const gz::math::Angle& yaw);
 
     template<typename T>
     static std::vector<T> LoadVector(const std::filesystem::path& path);

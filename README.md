@@ -6,7 +6,7 @@ Gazebo Fortress(Ignition Gazebo 6) + ROS 2 Humble 환경에서 동작하는 Hunt
 
 | 패키지 | 설명 |
 |---|---|
-| `gazebo_fortress` | 시뮬레이션 환경, Launch 파일, URDF/SDF, 컨트롤러 설정, `gps_covariance_relay` 노드 |
+| `gazebo_harmonic` | 시뮬레이션 환경, Launch 파일, URDF/SDF, 컨트롤러 설정, `gps_covariance_relay` 노드 |
 | `hunter_base` | Hunter 로봇 기본 URDF 모델(링크/휠/박스 분리 구성) 및 STL 메쉬 리소스 |
 | `external/RGLGazeboPlugin` | GPU 가속 LiDAR 시뮬레이션 플러그인 (Gaussian noise 추가) |
 
@@ -25,7 +25,7 @@ Gazebo Fortress(Ignition Gazebo 6) + ROS 2 Humble 환경에서 동작하는 Hunt
 
 ```
 hunter_gazebo.xacro (robot name: hunter2)
-├── gazebo_fortress/urdf/
+├── gazebo_harmonic/urdf/
 │   ├── hunter_base.xacro       # 마찰 계수, 재질, IMU/GPS 센서 플러그인
 │   ├── gazebo_control.xacro    # Ackermann 조향, JointState, OdometryPublisher
 │   ├── velodyne_VLP32C_gazebo.xacro  # RGL LiDAR 센서 설정
@@ -79,7 +79,7 @@ Hunter 로봇은 **Ackermann Steering** 구조를 사용합니다.
 | 측정 범위 | 0.1 m ~ 200 m |
 | 노이즈 | Gaussian distance (mean: 0, stddev_base: 0.03 m) |
 
-> 라이다 파라미터는 `src/gazebo_fortress/urdf/velodyne_VLP32C_gazebo.xacro`에서 수정합니다.
+> 라이다 파라미터는 `src/gazebo_harmonic/urdf/velodyne_VLP32C_gazebo.xacro`에서 수정합니다.
 > `pattern_preset`을 `pattern_uniform`으로 교체하면 수평 샘플 수, 수직 채널 수, 각도 범위를 직접 지정할 수 있습니다 (주석 처리된 예시 참고).
 
 #### IMU 노이즈 파라미터
@@ -100,7 +100,7 @@ Hunter 로봇은 **Ackermann Steering** 구조를 사용합니다.
 | 클리핑 | 0.1 m ~ 100 m |
 | 마운트 위치 | front_box 링크, LiDAR 전방 하부 |
 
-> 카메라 파라미터는 `src/gazebo_fortress/urdf/camera_gazebo.xacro`에서 수정합니다.
+> 카메라 파라미터는 `src/gazebo_harmonic/urdf/camera_gazebo.xacro`에서 수정합니다.
 
 #### GPS 파이프라인
 
@@ -189,13 +189,13 @@ source install/setup.bash
 ### Empty World (GPS 포함, 전체 기능)
 
 ```bash
-ros2 launch gazebo_fortress hunter_sim_start.launch.py
+ros2 launch gazebo_harmonic hunter_sim_start.launch.py
 ```
 
 ### Baylands World
 
 ```bash
-ros2 launch gazebo_fortress hunter_simple_baylands.launch.py
+ros2 launch gazebo_harmonic hunter_simple_baylands.launch.py
 ```
 
 ### 키보드 원격 제어

@@ -19,22 +19,24 @@
 #include "rgl/api/core.h"
 #include "LidarPatternLoader.hh"
 
-#include <ignition/common/MeshManager.hh>
+#include <gz/common/MeshManager.hh>
 
-#include <ignition/gazebo/components/Geometry.hh>
-#include <ignition/gazebo/components/Visual.hh>
-#include <ignition/gazebo/System.hh>
+#include <gz/sim/components/Geometry.hh>
+#include <gz/sim/components/Visual.hh>
+#include <gz/sim/System.hh>
 
-#include <ignition/transport/Node.hh>
+#include <gz/transport/Node.hh>
+#include <gz/msgs/details/laserscan.pb.h>
+
 
 namespace rgl
 {
 
 class RGLServerPluginInstance :
-    public ignition::gazebo::System,
-    public ignition::gazebo::ISystemConfigure,
-    public ignition::gazebo::ISystemPreUpdate,
-    public ignition::gazebo::ISystemPostUpdate
+    public gz::sim::System,
+    public gz::sim::ISystemConfigure,
+    public gz::sim::ISystemPreUpdate,
+    public gz::sim::ISystemPostUpdate
 {
 public:
     RGLServerPluginInstance() = default;
@@ -43,27 +45,27 @@ public:
 
     // only called once, when plugin is being loaded
     void Configure(
-        const ignition::gazebo::Entity& entity,
+        const gz::sim::Entity& entity,
         const std::shared_ptr<const sdf::Element>& sdf,
-        ignition::gazebo::EntityComponentManager& ecm,
-        ignition::gazebo::EventManager& eventMgr) override;
+        gz::sim::EntityComponentManager& ecm,
+        gz::sim::EventManager& eventMgr) override;
 
     // called every time before physics update runs (can change entities)
     void PreUpdate(
-            const ignition::gazebo::UpdateInfo& info,
-            ignition::gazebo::EntityComponentManager& ecm) override;
+            const gz::sim::UpdateInfo& info,
+            gz::sim::EntityComponentManager& ecm) override;
 
     // called every time after physics runs (can't change entities)
     void PostUpdate(
-            const ignition::gazebo::UpdateInfo& info,
-            const ignition::gazebo::EntityComponentManager& ecm) override;
+            const gz::sim::UpdateInfo& info,
+            const gz::sim::EntityComponentManager& ecm) override;
 
 private:
     bool LoadConfiguration(const std::shared_ptr<const sdf::Element>& sdf);
-    void CreateLidar(ignition::gazebo::Entity entity,
-                     ignition::gazebo::EntityComponentManager& ecm);
+    void CreateLidar(gz::sim::Entity entity,
+                     gz::sim::EntityComponentManager& ecm);
 
-    void UpdateLidarPose(const ignition::gazebo::EntityComponentManager& ecm);
+    void UpdateLidarPose(const gz::sim::EntityComponentManager& ecm);
     void UpdateAlternatingLidarPattern();
 
     bool ShouldRayTrace(std::chrono::steady_clock::duration sim_time,
@@ -73,16 +75,16 @@ private:
     bool FetchLaserScanResult();
     bool FetchPointCloudResult(rgl_node_t formatNode);
 
-    ignition::msgs::PointCloudPacked CreatePointCloudMsg(std::chrono::steady_clock::duration sim_time, const std::string& frame);
-    ignition::msgs::LaserScan CreateLaserScanMsg(std::chrono::steady_clock::duration sim_time, const std::string& frame);
+    gz::msgs::PointCloudPacked CreatePointCloudMsg(std::chrono::steady_clock::duration sim_time, const std::string& frame);
+    gz::msgs::LaserScan CreateLaserScanMsg(std::chrono::steady_clock::duration sim_time, const std::string& frame);
 
     void DestroyLidar();
 
     std::string topicName;
     std::string frameId;
     rgl_vec2f lidarMinMaxRange;
-    ignition::math::Angle scanHMin;
-    ignition::math::Angle scanHMax;
+    gz::math::Angle scanHMin;
+    gz::math::Angle scanHMax;
     int scanHSamples;
     std::vector<rgl_mat3x4f> lidarPattern;
     std::size_t alternatingPatternIndex = 0;
@@ -109,8 +111,6 @@ private:
         };
     } resultLaserScan{};
 
-    bool updateOnPausedSim = false;
-    bool publishLaserScan = false;
     bool useNoiseDistance = false;
     bool useNoiseAngularRay = false;
     float noiseDistanceMean = 0.0f;
@@ -119,11 +119,14 @@ private:
     float noiseAngularMean = 0.0f;
     float noiseAngularStdDev = 0.0f;
 
-    ignition::gazebo::Entity thisLidarEntity;
-    ignition::transport::Node::Publisher pointCloudPublisher;
-    ignition::transport::Node::Publisher laserScanPublisher;
-    ignition::transport::Node::Publisher pointCloudWorldPublisher;
-    ignition::transport::Node gazeboNode;
+    bool updateOnPausedSim = false;
+    bool publishLaserScan = false;
+
+    gz::sim::Entity thisLidarEntity;
+    gz::transport::Node::Publisher pointCloudPublisher;
+    gz::transport::Node::Publisher laserScanPublisher;
+    gz::transport::Node::Publisher pointCloudWorldPublisher;
+    gz::transport::Node gazeboNode;
 
     std::vector<rgl_node_t> rglNodesUseRays;
     rgl_node_t rglNodeLidarPose = nullptr;
