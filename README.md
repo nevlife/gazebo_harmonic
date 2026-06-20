@@ -9,6 +9,8 @@ Gazebo Harmonic(gz-sim 8) + ROS 2 Jazzy 환경에서 동작하는 Hunter 로봇 
 | `gazebo_harmonic` | 시뮬레이션 환경, Launch 파일, URDF/SDF, 컨트롤러 설정, `gps_covariance_relay`/`vehicle_speed_publisher` 노드 |
 | `hunter_base` | Hunter 로봇 기본 URDF 모델(링크/휠/박스 분리 구성) 및 STL 메쉬 리소스 |
 | `external/RGLGazeboPlugin` | GPU 가속 LiDAR 시뮬레이션 플러그인 (Gaussian noise 추가) |
+| `scout_base` | Scout 2.0 모델과 원본 DAE 메쉬 |
+| `limo_base` | LIMO 4륜 차동 모델 |
 
 ## 시스템 요구사항
 
@@ -210,6 +212,24 @@ ros2 launch gazebo_harmonic hunter_sim_start.launch.py
 ```bash
 ros2 launch gazebo_harmonic hunter_simple_baylands.launch.py
 ```
+
+### Scout 2.0
+
+```bash
+ros2 launch gazebo_harmonic scout_sim_start.launch.py
+```
+
+주요 토픽은 `/cmd_vel`, `/scout/odometry`, `/scout/joint_states`,
+`/scout/scan`, `/scout/camera/*`입니다.
+
+### LIMO
+
+```bash
+ros2 launch gazebo_harmonic limo_sim_start.launch.py
+```
+
+주요 토픽은 `/cmd_vel`, `/limo/odometry`, `/limo/joint_states`,
+`/limo/scan`, `/limo/imu`, `/limo/camera/*`입니다.
 
 ### 키보드 원격 제어
 
