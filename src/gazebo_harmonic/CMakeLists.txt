@@ -30,7 +30,7 @@ install(TARGETS gps_covariance_relay vehicle_speed_publisher
 )
 
 install(
-  DIRECTORY launch world urdf
+  DIRECTORY launch world urdf models
   DESTINATION share/${PROJECT_NAME}
 )
 

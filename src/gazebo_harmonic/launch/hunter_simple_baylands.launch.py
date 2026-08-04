@@ -12,7 +12,9 @@ def generate_launch_description():
     gazebo_model_path = '/home/pgw/dev/gazebo_models_worlds_collection'
     hunter_base_share = get_package_share_directory('hunter_base')
     hunter_base_parent = os.path.dirname(hunter_base_share)
-    combined_path = f'{gazebo_model_path}:{hunter_base_parent}:{hunter_base_share}/urdf'
+    local_models_path = os.path.join(
+        get_package_share_directory('gazebo_harmonic'), 'models')
+    combined_path = f'{gazebo_model_path}:{hunter_base_parent}:{hunter_base_share}/urdf:{local_models_path}'
     set_gz_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
         value=combined_path
@@ -83,38 +85,6 @@ def generate_launch_description():
         output='screen'
     )
 
-    static_tf_lidar = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_tf_lidar',
-        arguments=['0', '0', '0', '0', '0', '0', 'velodyne_sensor', 'hunter2/base_link/velodyne_sensor'],
-        output='screen'
-    )
-
-    static_tf_imu = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_tf_imu',
-        arguments=['0', '0', '0.05', '0', '0', '0', 'base_link', 'hunter2/base_link/imu_sensor'],
-        output='screen'
-    )
-
-    static_tf_gps = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_tf_gps',
-        arguments=['0', '0', '0.1', '0', '0', '0', 'base_link', 'hunter2/base_link/navsat_sensor'],
-        output='screen'
-    )
-
-    static_tf_camera = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_tf_camera',
-        arguments=['0', '0', '0', '0', '0', '0', 'camera_link', 'hunter2/base_link/camera_sensor'],
-        output='screen'
-    )
-
     gps_covariance_relay = Node(
         package='gazebo_harmonic',
         executable='gps_covariance_relay',
@@ -139,10 +109,6 @@ def generate_launch_description():
         gazebo_simulator,
         spawn_car,
         bridge,
-        static_tf_lidar,
-        static_tf_imu,
-        static_tf_gps,
-        static_tf_camera,
         gps_covariance_relay,
         vehicle_speed_publisher,
     ])

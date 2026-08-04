@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <model name="waypoint_marker">
+    <static>true</static>
+    <link name="link">
+      <visual name="disc">
+        <pose>0 0 0.01 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.25</radius>
+            <length>0.02</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1.0 0.4 0.0 1</ambient>
+          <diffuse>1.0 0.4 0.0 1</diffuse>
+        </material>
+      </visual>
+      <visual name="heading_arrow">
+        <pose>0.25 0 0.03 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.5 0.08 0.02</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.0 0.8 0.2 1</ambient>
+          <diffuse>0.0 0.8 0.2 1</diffuse>
+        </material>
+      </visual>
+      <visual name="pillar">
+        <pose>0 0 0.35 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.7</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1.0 0.4 0.0 1</ambient>
+          <diffuse>1.0 0.4 0.0 1</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

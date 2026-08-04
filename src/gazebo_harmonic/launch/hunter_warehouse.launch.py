@@ -9,13 +9,11 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
-    # Set Gazebo Harmonic model path
-    gazebo_model_path = '/home/pgw/dev/gazebo_models_worlds_collection'
     hunter_base_share = get_package_share_directory('hunter_base')
     hunter_base_parent = os.path.dirname(hunter_base_share)
     local_models_path = os.path.join(
         get_package_share_directory('gazebo_harmonic'), 'models')
-    combined_path = f'{gazebo_model_path}:{hunter_base_parent}:{hunter_base_share}/urdf:{local_models_path}'
+    combined_path = f'{hunter_base_parent}:{hunter_base_share}/urdf:{local_models_path}'
     set_gz_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
         value=combined_path
@@ -40,7 +38,7 @@ def generate_launch_description():
     )
 
     pkg_share = get_package_share_directory('gazebo_harmonic')
-    gazebo_world_path = os.path.join(pkg_share, 'world', 'empty_with_gps.sdf')
+    gazebo_world_path = os.path.join(pkg_share, 'world', 'warehouse.sdf')
 
     gazebo_simulator = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -52,7 +50,7 @@ def generate_launch_description():
     car_sim_options = {
         'start_x': '0',
         'start_y': '0',
-        'start_z': '0.4',
+        'start_z': '0.3',
         'start_yaw': '0',
     }
 
@@ -65,17 +63,13 @@ def generate_launch_description():
         launch_arguments=car_sim_options.items()
     )
 
-    # Bridge between Gazebo Harmonic and ROS 2
+    # Bridge between Gazebo Harmonic and ROS 2 (indoor world: no GPS)
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
         parameters=[{'use_sim_time': True}],
-        remappings=[
-            ('/gps', '/gps/raw'),
-        ],
         arguments=[
             '/imu@sensor_msgs/msg/Imu@gz.msgs.IMU',
-            '/gps@sensor_msgs/msg/NavSatFix@gz.msgs.NavSat',
             '/velodyne_points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
             '/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
@@ -84,14 +78,6 @@ def generate_launch_description():
             '/odometry/ground_truth@nav_msgs/msg/Odometry@gz.msgs.Odometry',
             '/camera/raw@sensor_msgs/msg/Image[gz.msgs.Image'
         ],
-        output='screen'
-    )
-
-    gps_covariance_relay = Node(
-        package='gazebo_harmonic',
-        executable='gps_covariance_relay',
-        name='gps_covariance_relay',
-        parameters=[{'use_sim_time': True}],
         output='screen'
     )
 
@@ -111,6 +97,5 @@ def generate_launch_description():
         gazebo_simulator,
         spawn_car,
         bridge,
-        gps_covariance_relay,
         vehicle_speed_publisher,
     ])
